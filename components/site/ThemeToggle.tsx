@@ -6,7 +6,7 @@ export default function ThemeToggle() {
     const next = root.dataset.theme === "dark" ? "light" : "dark";
     root.dataset.theme = next;
     try {
-      localStorage.setItem("snip_theme", next);
+      localStorage.setItem("dlinkit_theme", next);
     } catch {
       // Storage can be unavailable in private mode; the theme still applies for this page.
     }

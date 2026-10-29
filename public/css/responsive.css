@@ -80,6 +80,64 @@
   .bars {
     grid-template-columns: 1fr;
   }
+
+  .chart-head {
+    align-items: flex-start;
+  }
+
+  .detail-head .acts {
+    width: 100%;
+  }
+}
+
+/* ---------- 640px: dashboard tables and controls ---------- */
+
+@media (max-width: 640px) {
+  .table-scroll {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .links-table {
+    min-width: 380px;
+  }
+
+  /* Unique visitors are folded into the detail panel on phones. */
+  .links-table th:nth-child(3),
+  .links-table td:nth-child(3) {
+    display: none;
+  }
+
+  .links-table td .orig {
+    max-width: 150px;
+  }
+
+  .admin-block table {
+    min-width: 560px;
+  }
+
+  .seg button {
+    padding: 5px 9px;
+  }
+
+  .locked {
+    padding: 32px 16px;
+  }
+}
+
+/* ---------- 400px: smallest phones ---------- */
+
+@media (max-width: 400px) {
+  .kpis {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .kpi:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .recent {
+    max-height: 220px;
+  }
 }
 
 /* ---------- 560px: phone ---------- */
@@ -194,8 +252,18 @@
     padding: 22px;
   }
 
-  footer {
-    padding: 16px;
+  .site-footer {
+    gap: 22px;
+    padding: 28px 16px 18px;
+  }
+
+  .foot-nav {
+    gap: 24px;
+  }
+
+  .foot-nav div {
+    min-width: 0;
+    flex: 1 1 140px;
   }
 }
 

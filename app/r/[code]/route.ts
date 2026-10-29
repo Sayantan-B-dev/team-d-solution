@@ -21,13 +21,13 @@ function htmlPage(
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>${title} — // Snip</title>
+<title>${title} — // dlinkit</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="/css/tokens.css" />
 <link rel="stylesheet" href="/css/base.css" />
-<script>(function(){try{var t=localStorage.getItem("snip_theme");if(t!=="light"&&t!=="dark"){t=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"}document.documentElement.dataset.theme=t}catch(e){document.documentElement.dataset.theme="light"}})();</script>
+<script>(function(){try{var t=localStorage.getItem("dlinkit_theme");if(t!=="light"&&t!=="dark"){t=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"}document.documentElement.dataset.theme=t}catch(e){document.documentElement.dataset.theme="light"}})();</script>
 <style>
   body { background: var(--frame); }
   .screen {
@@ -53,12 +53,12 @@ function htmlPage(
 <body>
   <main class="screen">
     <div class="inner">
-      <span class="mark">// Snip</span>
+      <span class="mark">// dlinkit</span>
       <span class="stripe" aria-hidden="true"></span>
       <h1>${title}</h1>
       <p>${message}</p>
       ${safeCode ? `<span class="path">/r/${safeCode}</span>` : ""}
-      <a class="pill back" href="/">Back to Snip ↗</a>
+      <a class="pill back" href="/">Back to dlinkit ↗</a>
     </div>
   </main>
 </body>

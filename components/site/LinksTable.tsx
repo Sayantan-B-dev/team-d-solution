@@ -67,7 +67,7 @@ export default function LinksTable({
 
   return (
     <div className="table-scroll">
-      <table>
+      <table className="links-table">
         <thead>
           <tr>
             <th scope="col">Link</th>

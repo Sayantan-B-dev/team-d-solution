@@ -9,7 +9,7 @@ export default function NotFound() {
         That page does not exist. Head back, shorten a link, and watch the clicks arrive.
       </p>
       <Link className="pill" href="/">
-        Back to Snip ↗
+        Back to dlinkit ↗
       </Link>
     </main>
   );

@@ -36,7 +36,7 @@ export default function AuthModal({ onClose }: Props) {
       <div className="modal" role="dialog" aria-modal="true" aria-labelledby="auth-title">
         <h3 id="auth-title">Log in</h3>
         <p>
-          Continue with Google to create links and see your analytics. Snip stores only your name,
+          Continue with Google to create links and see your analytics. dlinkit stores only your name,
           email and avatar so your links and clicks stay yours.
         </p>
         <div className="row">

@@ -427,15 +427,76 @@ h2 {
   color: var(--ink);
 }
 
-footer {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-  padding: 20px var(--pad);
-  color: var(--muted);
+.site-footer {
+  display: grid;
+  gap: 26px;
+  padding: 36px var(--pad) 22px;
+  border-top: 1px solid var(--line);
   font-family: var(--mono);
   font-size: 11px;
+}
+
+.foot-top {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 28px;
+}
+
+.foot-brand {
+  display: flex;
+  max-width: 320px;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.foot-brand .mark {
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.foot-brand p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+.foot-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 44px;
+}
+
+.foot-nav div {
+  display: flex;
+  min-width: 120px;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.foot-nav a {
+  color: var(--muted);
+  font-size: 11px;
+  text-decoration: none;
+}
+
+.foot-nav a:hover {
+  color: var(--ink);
+}
+
+.foot-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 16px;
+  border-top: 1px solid color-mix(in srgb, var(--line) 25%, transparent);
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 /* ---------- Empty, loading, errors ---------- */
