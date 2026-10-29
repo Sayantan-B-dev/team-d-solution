@@ -1,0 +1,2 @@
+# Testing and Debugging
+Start with the smallest relevant check. Inspect existing scripts. Distinguish reasoning, tests run, command output, and manual browser verification. For long installs/lint/build/tests/migrations/deploys, ask the user to run the exact command from the right directory and paste output. Never claim a check passed without evidence. Fix root causes with minimal safe changes and give a short manual checklist.
