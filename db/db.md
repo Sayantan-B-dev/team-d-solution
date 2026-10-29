@@ -33,7 +33,7 @@ db/
 1. `db/addon.sql`
 2. `db/test.sql`
 
-`addon.sql` adds `users.role`, the `users_role_check` constraint and `users_role_idx`. `setup.sql` already contains those statements, so the two are not meant to be run one after the other.
+`addon.sql` adds `users.role`, the `users_role_check` constraint, `users_role_idx`, and the guest-link columns, constraint and index. `setup.sql` already contains those statements, so the two are not meant to be run one after the other.
 
 ### Full reset
 
@@ -83,7 +83,7 @@ Host: ep-....neon.tech/neondb
 Connected: PostgreSQL 18.x
 Applied setup.sql
 Tables: clicks, links, users
-Indexes: 11 (6 explicit + primary/unique)
+Indexes: 12 (7 explicit + primary/unique)
 Roles: users.role present
 Rows: users 0 (admins 0) · links 0 · clicks 0
 Done. The app can use this database now.
@@ -187,7 +187,7 @@ Safety rules enforced by the API:
 1. tables
 2. role and ownership columns
 3. all indexes
-4. constraints and cascade rules
+4. constraints and cascade rules (including `links_owner_required`)
 5. row counts and role counts
 6. per-user activity
 7. all links with owner, expiry state, clicks, uniques
@@ -229,9 +229,11 @@ users (1) ──< links (1) ──< clicks (N)
 | Table | Purpose | Key columns |
 |---|---|---|
 | `users` | One row per Google account | `id` uuid, `google_sub` unique, `email`, `name`, `avatar_url`, `role`, `created_at` |
-| `links` | One row per short link | `id` uuid, `user_id` → users, `code` unique, `url`, `created_at`, `expires_at` |
+| `links` | One row per short link | `id` uuid, `user_id` → users (nullable), `owner_token_hash` (guest owner), `code` unique, `url`, `created_at`, `expires_at` |
 | `clicks` | One row per redirect | `id` bigserial, `link_id` → links, `clicked_at`, `referrer`, `user_agent`, `device`, `visitor_hash` |
 
+- A link belongs to exactly one owner: `user_id` for a signed-in account, or `owner_token_hash` (SHA-256 of an httpOnly guest cookie) for a signed-out visitor. `links_owner_required` enforces that it is never neither. Signing in claims that browser's guest links by setting `user_id` and clearing the hash.
+- Guest links are capped at 5 per browser per rolling 24 hours. The cap is enforced inside a transaction with an advisory lock, so parallel requests cannot exceed it.
 - Deleting a user cascades to their links; deleting a link cascades to its clicks.
 - All timestamps are `timestamptz`; chart buckets are formatted in UTC.
 - `visitor_hash` is an HMAC of IP + user agent. Raw IP addresses are never stored.
@@ -242,13 +244,14 @@ users (1) ──< links (1) ──< clicks (N)
 | Index | Columns | Speeds up |
 |---|---|---|
 | `links_user_created_idx` | `links (user_id, created_at desc)` | Dashboard list for one owner |
+| `links_owner_created_idx` | `links (owner_token_hash, created_at desc) where not null` | Guest daily quota count |
 | `clicks_link_time_idx` | `clicks (link_id, clicked_at desc)` | Redirect insert/read, recent clicks, time buckets, last 24h |
 | `clicks_link_visitor_idx` | `clicks (link_id, visitor_hash)` | `count(distinct visitor_hash)` |
 | `clicks_link_breakdown_idx` | `clicks (link_id, clicked_at desc) include (device, referrer)` | Range totals, device/referrer split without heap reads |
 | `users_email_idx` | `users (lower(email))` | Case-insensitive owner lookup |
 | `users_role_idx` | `users (role)` | Admin console role counts and filters |
 
-Six explicit indexes plus five primary/unique indexes = **11 total**.
+Seven explicit indexes plus five primary/unique indexes = **12 total**.
 
 ---
 

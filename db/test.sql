@@ -19,11 +19,11 @@ from information_schema.columns
 where table_schema = 'public'
   and (
     (table_name = 'users' and column_name in ('id', 'email', 'role'))
-    or (table_name = 'links' and column_name in ('id', 'user_id', 'code', 'expires_at'))
+    or (table_name = 'links' and column_name in ('id', 'user_id', 'owner_token_hash', 'code', 'expires_at'))
   )
 order by table_name, column_name;
 
--- 3. Indexes. Expect 11 total: 6 explicit + 5 primary/unique.
+-- 3. Indexes. Expect 12 total: 7 explicit + 5 primary/unique.
 select tablename, indexname
 from pg_indexes
 where schemaname = 'public'
@@ -71,7 +71,7 @@ order by clicks desc, u.created_at asc;
 -- 7. All links with owner and totals.
 select
   l.code,
-  u.email as owner,
+  coalesce(u.email, 'guest browser') as owner,
   l.url,
   l.created_at,
   l.expires_at,
@@ -83,7 +83,7 @@ select
   count(c.id)::int as clicks,
   count(distinct c.visitor_hash)::int as unique_visitors
 from links l
-join users u on u.id = l.user_id
+left join users u on u.id = l.user_id
 left join clicks c on c.link_id = l.id
 group by l.id, u.email
 order by l.created_at desc
@@ -92,10 +92,10 @@ limit 50;
 -- 8. Top links by clicks.
 select
   l.code,
-  u.email as owner,
+  coalesce(u.email, 'guest browser') as owner,
   count(c.id)::int as clicks
 from links l
-join users u on u.id = l.user_id
+left join users u on u.id = l.user_id
 join clicks c on c.link_id = l.id
 group by l.id, u.email
 order by clicks desc, l.code asc
@@ -129,18 +129,19 @@ order by c.clicked_at desc
 limit 20;
 
 -- 11. Expired links still visible in dashboards.
-select l.code, u.email as owner, l.expires_at
+select l.code, coalesce(u.email, 'guest browser') as owner, l.expires_at
 from links l
-join users u on u.id = l.user_id
+left join users u on u.id = l.user_id
 where l.expires_at is not null
   and l.expires_at <= now()
 order by l.expires_at desc;
 
 -- 12. Integrity checks. Both rows must be 0.
-select 'links without a user' as check_name, count(*)::int as bad_rows
-from links l
-left join users u on u.id = l.user_id
-where u.id is null
+-- A guest link is valid: it has a token hash instead of a user_id.
+select 'links without an owner' as check_name, count(*)::int as bad_rows
+from links
+where user_id is null
+  and owner_token_hash is null
 union all
 select 'clicks without a link', count(*)::int
 from clicks c

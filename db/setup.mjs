@@ -61,6 +61,7 @@ const pool = new Pool({
 const REQUIRED_TABLES = ["users", "links", "clicks"];
 const REQUIRED_INDEXES = [
   "links_user_created_idx",
+  "links_owner_created_idx",
   "clicks_link_time_idx",
   "clicks_link_visitor_idx",
   "clicks_link_breakdown_idx",

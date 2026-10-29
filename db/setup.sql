@@ -99,6 +99,11 @@ create table if not exists clicks (
 create index if not exists links_user_created_idx
   on links (user_id, created_at desc);
 
+-- Guest daily quota: count today's links for one browser token hash.
+create index if not exists links_owner_created_idx
+  on links (owner_token_hash, created_at desc)
+  where owner_token_hash is not null;
+
 -- Analytics: recent clicks, time buckets and "last 24h" for one link.
 create index if not exists clicks_link_time_idx
   on clicks (link_id, clicked_at desc);
@@ -128,7 +133,7 @@ analyze clicks;
 
 -- ---------------------------------------------------------------------------
 -- 3. Verification (read-only)
--- Expect 3 tables, 11 indexes (6 explicit + primary/unique), 0 rows on a fresh DB.
+-- Expect 3 tables, 12 indexes (7 explicit + primary/unique), 0 rows on a fresh DB.
 -- ---------------------------------------------------------------------------
 
 select table_name
