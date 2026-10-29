@@ -93,3 +93,6 @@ Add the live URL at the top of your PR description.
 Working demo (35%) | Technical depth (25%) | Completeness of core features (20%) | Deployment (10%) | Presentation (10%)
 
 Good luck, build something great!
+
+
+chekpoint 1
