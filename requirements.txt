@@ -1,7 +1,0 @@
-flask
-flask-cors
-gunicorn
-python-dotenv
-psycopg2-binary
-redis
-pyjwt
