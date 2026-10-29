@@ -5,10 +5,10 @@ export type RedirectCacheEntry = {
 };
 
 const globalForCache = globalThis as unknown as {
-  shortwaveRedirectCache?: Map<string, RedirectCacheEntry>;
+  dlinkitRedirectCache?: Map<string, RedirectCacheEntry>;
 };
 
-const cache = (globalForCache.shortwaveRedirectCache ??= new Map<string, RedirectCacheEntry>());
+const cache = (globalForCache.dlinkitRedirectCache ??= new Map<string, RedirectCacheEntry>());
 
 const CACHE_TTL_MS = 60_000;
 const CACHE_MAX_ENTRIES = 500;

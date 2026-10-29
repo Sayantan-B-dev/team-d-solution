@@ -35,6 +35,6 @@ export function referrerHost(referrer: string | null): string {
 }
 
 export function visitorFingerprint(ip: string, userAgent: string | null): string {
-  const secret = process.env.AUTH_SECRET || process.env.GOOGLE_CLIENT_SECRET || "shortwave-dev-only";
+  const secret = process.env.AUTH_SECRET || process.env.GOOGLE_CLIENT_SECRET || "dlinkit-dev-only";
   return createHmac("sha256", secret).update(`${ip}|${userAgent ?? ""}`).digest("hex");
 }

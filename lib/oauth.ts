@@ -40,6 +40,18 @@ export function resolveRedirectUri(req: NextRequest): string {
   const loopback = (host: string) =>
     host === "localhost" || host === "127.0.0.1" || host === "[::1]" || host === "::1";
 
+  // A localhost value copied into production (a very common copy-paste) would
+  // send Google straight back to the developer's machine. Prefer the request
+  // origin whenever the configured value points at loopback and the real
+  // request does not.
+  if (loopback(configured.hostname) && !loopback(actual.hostname)) {
+    console.warn(
+      `[auth] GOOGLE_REDIRECT_URI points at ${configured.origin} but the request came from ${actual.origin}; using ${derived}. ` +
+        "Set GOOGLE_REDIRECT_URI to the deployed callback and register it in Google Cloud Console."
+    );
+    return derived;
+  }
+
   if (
     loopback(configured.hostname) &&
     loopback(actual.hostname) &&

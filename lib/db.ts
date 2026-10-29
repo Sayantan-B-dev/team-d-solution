@@ -1,8 +1,8 @@
 import { Pool, type PoolClient, type QueryResult, type QueryResultRow } from "pg";
 
 const globalForDb = globalThis as unknown as {
-  shortwavePool?: Pool;
-  shortwaveSchema?: Promise<void>;
+  dlinkitPool?: Pool;
+  dlinkitSchema?: Promise<void>;
 };
 
 // Keep in sync with db/setup.sql.
@@ -103,8 +103,8 @@ export function getPool(): Pool {
     // Keep the raw string when it is not a parseable URL.
   }
 
-  if (!globalForDb.shortwavePool) {
-    globalForDb.shortwavePool = new Pool({
+  if (!globalForDb.dlinkitPool) {
+    globalForDb.dlinkitPool = new Pool({
       connectionString,
       ssl: { rejectUnauthorized: false },
       max: 5,
@@ -120,26 +120,26 @@ export function getPool(): Pool {
       application_name: "snip",
     });
 
-    globalForDb.shortwavePool.on("error", (error) => {
+    globalForDb.dlinkitPool.on("error", (error) => {
       console.error("Unexpected database pool error:", error.message);
     });
   }
 
-  return globalForDb.shortwavePool;
+  return globalForDb.dlinkitPool;
 }
 
 export async function ensureSchema(): Promise<void> {
-  if (!globalForDb.shortwaveSchema) {
-    globalForDb.shortwaveSchema = getPool()
+  if (!globalForDb.dlinkitSchema) {
+    globalForDb.dlinkitSchema = getPool()
       .query(SCHEMA_SQL)
       .then(() => undefined)
       .catch((error: unknown) => {
-        globalForDb.shortwaveSchema = undefined;
+        globalForDb.dlinkitSchema = undefined;
         throw error;
       });
   }
 
-  return globalForDb.shortwaveSchema;
+  return globalForDb.dlinkitSchema;
 }
 
 export async function db<T extends QueryResultRow = QueryResultRow>(

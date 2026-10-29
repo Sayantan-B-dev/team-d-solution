@@ -5,11 +5,11 @@ type Bucket = {
 };
 
 const globalForLimit = globalThis as unknown as {
-  shortwaveRateBuckets?: Map<string, Bucket>;
-  shortwaveRateSweep?: number;
+  dlinkitRateBuckets?: Map<string, Bucket>;
+  dlinkitRateSweep?: number;
 };
 
-const buckets = (globalForLimit.shortwaveRateBuckets ??= new Map<string, Bucket>());
+const buckets = (globalForLimit.dlinkitRateBuckets ??= new Map<string, Bucket>());
 
 const SWEEP_INTERVAL_MS = 60_000;
 const MAX_BUCKETS = 10_000;
@@ -100,7 +100,7 @@ export function rateLimit(key: string, limit: number, windowMs: number): RateLim
 }
 
 function sweep(now: number) {
-  if (now - (globalForLimit.shortwaveRateSweep ?? 0) < SWEEP_INTERVAL_MS) return;
+  if (now - (globalForLimit.dlinkitRateSweep ?? 0) < SWEEP_INTERVAL_MS) return;
 
   // Window lengths are at most a day, so 25 hours is safely stale.
   const staleBefore = now - 25 * 60 * 60 * 1000;
@@ -108,7 +108,7 @@ function sweep(now: number) {
     if (bucket.windowStart < staleBefore) buckets.delete(key);
   }
 
-  globalForLimit.shortwaveRateSweep = now;
+  globalForLimit.dlinkitRateSweep = now;
 }
 
 function evictIfNeeded() {

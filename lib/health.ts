@@ -16,7 +16,7 @@ export async function healthResponse() {
   return NextResponse.json(
     {
       status: "ok",
-      project: "Team D: Link Shortener + Analytics",
+      project: "dlinkit — Link Shortener + Analytics (Team D)",
       stack: "nextjs",
       database,
     },

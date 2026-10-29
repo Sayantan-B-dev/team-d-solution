@@ -91,7 +91,7 @@ export function normalizeUrl(raw: unknown): UrlResult {
     try {
       const self = new URL(appUrl);
       if (parsed.origin === self.origin && parsed.pathname.startsWith("/r/")) {
-        return { ok: false, message: "That URL is already a Snip link. Enter the destination instead." };
+        return { ok: false, message: "That URL is already a dlinkit link. Enter the destination instead." };
       }
     } catch {
       // APP_URL is optional and may be malformed; ignore it.

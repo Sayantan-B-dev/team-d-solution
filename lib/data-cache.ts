@@ -4,10 +4,10 @@ type Entry = {
 };
 
 const globalForData = globalThis as unknown as {
-  shortwaveDataCache?: Map<string, Entry>;
+  dlinkitDataCache?: Map<string, Entry>;
 };
 
-const cache = (globalForData.shortwaveDataCache ??= new Map<string, Entry>());
+const cache = (globalForData.dlinkitDataCache ??= new Map<string, Entry>());
 const MAX_ENTRIES = 500;
 
 export function getCached<T>(key: string): T | null {
