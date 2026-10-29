@@ -55,7 +55,7 @@ GROUP_PATHS=(
   "lib"
   "db"
   "AGENTS.md DESIGN.md COMMIT.md docs"
-  "commit.js verify.local.mjs .opencode"
+  "commit.js verify.local.mjs"
 )
 
 # ---------------------------------------------------------------------------

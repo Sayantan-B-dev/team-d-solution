@@ -1,2 +1,0 @@
-# Next.js Implementation
-Inspect package scripts and app structure first. Preserve current architecture unless the brief requires change. Implement one vertical slice at a time: UI, behavior, data path, errors. Minimize dependencies and abstractions. Avoid unrelated refactors. Do not edit package manifests/lockfiles concurrently with another agent. For long lint/build/test commands, ask the user to run the exact command and share output. State what is implemented versus verified.

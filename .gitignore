@@ -57,8 +57,7 @@ desktop.ini
 *.local
 *.pem
 
-
-.next/
+# Local agent tooling (never part of the app or the submission)
 .opencode/
 .freebuff/
 

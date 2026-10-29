@@ -1,2 +1,0 @@
-# API and Data Security
-Keep secrets server-side in environment variables; never include secret values in chat, source, client bundles, logs, or commits. Tell the user variable names only. Validate untrusted input. Use safe actionable errors. Do not log tokens, credentials, personal data, or sensitive payloads. Ask before paid services, external accounts, sensitive data, or consequential integrations. Label mocks honestly. Choose the simplest safe solution that meets the brief.

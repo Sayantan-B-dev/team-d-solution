@@ -1,2 +1,0 @@
-# Deployment and Submission
-Treat deployment readiness as a core requirement. Prefer the existing target and setup. Ask before paid services, credentials, or infrastructure that may block delivery. Document required env variable names and deploy steps, never secret values. Confirm success only from actual output or user confirmation. Provide a manual checklist for app load, core flow, errors, responsive layout, and deployed URL. User handles Voyage PR and MLH OrganizerHQ submission.

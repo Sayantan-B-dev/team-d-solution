@@ -14,6 +14,8 @@ Root is intentionally small. Read the file for the area you are touching before 
 | `docs/general/SETUP.md` | Environment, database, Google OAuth, deployment, verification and known limits. |
 | `db/db.md` | Database reference and troubleshooting. |
 
+`.opencode/` and `.freebuff/` are local agent tooling, gitignored, and never part of the app or the submission.
+
 Any new working memory (plans, state, decisions) goes in `docs/brain/`. Any general how-to or reference doc goes in `docs/general/`. Do not add new markdown files to the repository root beyond `README.md`, `AGENTS.md`, `DESIGN.md` and `COMMIT.md`; reference the right folder instead.
 
 ## Mission and priorities
