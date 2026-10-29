@@ -10,17 +10,17 @@ Marketing teams need to know who clicks their links. Build a shortener with a re
 
 ## Must-have (core, do these first)
 
-- [ ] Create short links (auth required)
-- [ ] Fast redirect /r/:code
-- [ ] Track every click (time, device, referrer)
-- [ ] Stats endpoint + dashboard chart
+- [x] Create short links (auth required)
+- [x] Fast redirect /r/:code
+- [x] Track every click (time, device, referrer)
+- [x] Stats endpoint + dashboard chart
 
 ## Bonus (only after the core works end to end)
 
 - [ ] Redis cache for redirects
-- [ ] Rate limiting per user/IP
-- [ ] Custom aliases and expiry dates
-- [ ] Unique vs total clicks
+- [x] Rate limiting per user/IP
+- [x] Custom aliases and expiry dates
+- [x] Unique vs total clicks
 
 ## Industry-level tech we expect you to use
 

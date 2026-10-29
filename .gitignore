@@ -56,3 +56,9 @@ desktop.ini
 # Local scratch files
 *.local
 *.pem
+
+
+.next/
+.opencode/
+.freebuff/
+
