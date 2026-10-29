@@ -1,5 +1,5 @@
 -- ===========================================================================
--- // Snip — add-on migration for an existing database
+-- // dlinkit — add-on migration for an existing database
 --
 -- Run this only when the tables already exist and you want the newer
 -- role and guest-link support. `setup.sql` also includes these statements.

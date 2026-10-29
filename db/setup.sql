@@ -1,5 +1,5 @@
 -- ===========================================================================
--- // Snip — complete database setup (Neon PostgreSQL)
+-- // dlinkit — complete database setup (Neon PostgreSQL)
 --
 -- Paste this ENTIRE file into the Neon SQL Editor and press Run.
 -- Idempotent: safe on a fresh database and safe to re-run on an existing one.

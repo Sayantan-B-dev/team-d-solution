@@ -1,4 +1,4 @@
--- // Snip — DESTRUCTIVE reset
+-- // dlinkit — DESTRUCTIVE reset
 --
 -- Deletes ALL users, links and clicks in this database.
 -- There is no undo. Only run this on a development/demo database.

@@ -78,7 +78,7 @@ npm run db:setup
 Expected output:
 
 ```
-// Snip database setup
+// dlinkit database setup
 Host: ep-....neon.tech/neondb
 Connected: PostgreSQL 18.x
 Applied setup.sql
@@ -270,7 +270,7 @@ Seven explicit indexes plus five primary/unique indexes = **12 total**.
 | App shows `database: "down"` at `/health` | Check `NEON_DATABASE_URL` and that the project is awake. |
 | Admin console says `403` | Run the `update users set role='admin' ...` query, then sign out and in. |
 | `rateLimitHeaders is not a function` after editing `lib/rate-limit.ts` | Stale dev bundle. Stop the dev server and run `npm run dev` again. |
-| Google sign-in fails | Open `/api/auth/diagnose` and add the exact `effectiveRedirectUri` to Google Console. See `README-V2.md` section 2. |
+| Google sign-in fails | Open `/api/auth/diagnose` and add the exact `effectiveRedirectUri` to Google Console. See `docs/general/SETUP.md` section 2. |
 
 ### Google redirect diagnostics
 

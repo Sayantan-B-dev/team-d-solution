@@ -1,4 +1,4 @@
-// // Snip — apply the database schema and verify it.
+// // dlinkit — apply the database schema and verify it.
 //
 // Usage (from the repo root):
 //   npm run db:setup
@@ -45,10 +45,10 @@ try {
 
 try {
   const parsed = new URL(rawUrl);
-  console.log(`// Snip database setup`);
+  console.log(`// dlinkit database setup`);
   console.log(`Host: ${parsed.host}${parsed.pathname}`);
 } catch {
-  console.log(`// Snip database setup`);
+  console.log(`// dlinkit database setup`);
 }
 
 const pool = new Pool({

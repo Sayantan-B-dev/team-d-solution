@@ -1,5 +1,5 @@
 -- ===========================================================================
--- // Snip — read-only test suite
+-- // dlinkit — read-only test suite
 --
 -- Run after db/setup.sql. Nothing here writes, drops, or changes data.
 --   psql "$NEON_DATABASE_URL" -f db/test.sql
