@@ -1,5 +1,58 @@
-.env
-__pycache__/
+# Dependencies
 node_modules/
-*.pyc
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# Next.js build output
+.next/
+out/
+build/
+dist/
+.turbo/
+next-env.d.ts
+
+# Production / deploy
+.vercel/
+.netlify/
+*.tsbuildinfo
+
+# Environment files (keep the example)
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Test and coverage output
+coverage/
+.nyc_output/
+playwright-report/
+test-results/
+
+# Python leftovers (stack removed; ignore stray artifacts)
+__pycache__/
+*.py[cod]
 .venv/
+venv/
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Local scratch files
+*.local
+*.pem

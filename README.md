@@ -26,7 +26,7 @@ Marketing teams need to know who clicks their links. Build a shortener with a re
 
 - PostgreSQL
 - Redis
-- JWT auth
+- JWT auth 
 - Rate limiting
 
 A toy in-memory demo is not enough. Use real tools (database, auth, queue, model etc.) where it makes sense.
@@ -46,7 +46,7 @@ Pick **ONE** stack and delete the other, or keep both if you want. Both expose t
 | `GET` | `/health` | Already working |
 | `POST` | `/api/shorten` | Body: {url, alias?} -> {code} |
 | `GET` | `/r/:code` | Redirect to the original URL |
-| `GET` | `/api/stats/:code` | Click analytics for a link |
+| `GET` | `/api/stats/:code` | Click analytics for a link | 
 
 All the endpoints above return `501 Not Implemented` until you build them. Add more endpoints if you need.
 
@@ -95,4 +95,4 @@ Working demo (35%) | Technical depth (25%) | Completeness of core features (20%)
 Good luck, build something great!
 
 
-chekpoint 1
+chekpoint '

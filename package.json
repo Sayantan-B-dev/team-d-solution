@@ -1,18 +1,27 @@
 {
-  "name": "team-d",
-  "version": "1.0.0",
+  "name": "shortwave",
+  "version": "2.0.0",
   "private": true,
-  "main": "script.js",
   "scripts": {
-    "start": "node script.js"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "db:setup": "node --env-file=.env db/setup.mjs",
+    "db:reset": "node --env-file=.env db/setup.mjs --reset --yes"
   },
   "dependencies": {
-    "express": "^4.19.2",
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
-    "pg": "latest",
-    "ioredis": "latest",
-    "jsonwebtoken": "latest",
-    "express-rate-limit": "latest"
+    "jose": "^6.2.13",
+    "next": "^16.4.3",
+    "pg": "^8.23.1",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "@types/pg": "^8.23.1",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "typescript": "^7.0.2"
   }
 }
