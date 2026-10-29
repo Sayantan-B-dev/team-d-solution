@@ -1,0 +1,9 @@
+/* Design system entry point.
+   Component styles live in /public/css and are imported in cascade order:
+   tokens -> base -> surfaces -> responsive. */
+
+@import "../public/css/tokens.css";
+@import "../public/css/base.css";
+@import "../public/css/hero.css";
+@import "../public/css/dashboard.css";
+@import "../public/css/responsive.css";

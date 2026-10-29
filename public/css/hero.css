@@ -1,0 +1,198 @@
+/* ---------- Hero ---------- */
+
+.hero {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  border-bottom: 1px solid var(--line);
+}
+
+.hero-l {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  min-width: 0;
+  padding: 44px 40px 36px;
+  border-right: 1px solid var(--line);
+}
+
+.h1wrap {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.spark {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  margin-top: 14px;
+  overflow: visible;
+  animation: spark-turn 18s linear infinite;
+}
+
+.spark path {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.6;
+}
+
+h1 {
+  font-size: clamp(38px, 5.4vw, 68px);
+  font-weight: 500;
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+}
+
+.hero-l .lead {
+  max-width: 470px;
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+/* ---------- Shorten form ---------- */
+
+form.shorten {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  max-width: 560px;
+}
+
+form.shorten .field.full {
+  grid-column: 1 / -1;
+}
+
+form.shorten .actions {
+  display: flex;
+  grid-column: 1 / -1;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+form.shorten .actions .err {
+  flex: 1 1 180px;
+}
+
+/* ---------- Guest quota ---------- */
+
+.guest-limit {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 560px;
+  margin-top: 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--soft);
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.guest-limit b {
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.guest-limit div {
+  margin-top: 6px;
+}
+
+.guest-quota {
+  margin-top: 10px;
+}
+
+/* ---------- Result ---------- */
+
+.result {
+  max-width: 560px;
+  padding: 14px 16px;
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  background: var(--soft);
+}
+
+.result .url {
+  margin: 6px 0 10px;
+  font-family: var(--mono);
+  font-size: 15px;
+  overflow-wrap: anywhere;
+}
+
+.result .row {
+  gap: 8px;
+}
+
+/* ---------- Note ---------- */
+
+.hero-l .note {
+  max-width: 420px;
+}
+
+/* ---------- Artwork ---------- */
+
+.hero-r {
+  position: relative;
+  min-height: 420px;
+  overflow: hidden;
+  background: var(--panel);
+}
+
+.hero-r .art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.art-front {
+  transform-origin: 50% 55%;
+}
+
+@keyframes spark-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Scroll-driven parallax: back layer drifts down, front layer counter-drifts.
+   Wrapped in @supports so unsupporting browsers keep the static composition. */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .art-back {
+      animation: drift-back linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 0vh 80vh;
+    }
+
+    .art-front {
+      animation: drift-front linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 0vh 80vh;
+    }
+  }
+}
+
+@keyframes drift-back {
+  from {
+    transform: translate3d(0, -12px, 0) scale(1.06);
+  }
+  to {
+    transform: translate3d(0, 34px, 0) scale(1.06);
+  }
+}
+
+@keyframes drift-front {
+  from {
+    transform: translate3d(0, 16px, 0) scale(1.04);
+  }
+  to {
+    transform: translate3d(0, -26px, 0) scale(1.04);
+  }
+}
