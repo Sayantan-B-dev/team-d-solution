@@ -1,14 +1,14 @@
-# // Snip — Link Shortener + Analytics
+# // dlinkit — Link Shortener + Analytics
 
 Canonical project documentation for **Team D · Hack4Haldia'26**.
 
 `README.md` is the organizers' original challenge brief and is intentionally left unchanged. This file is the setup and deployment reference for the implementation.
 
-**// Snip** turns long URLs into short links and records every redirect: time, device, browser, referrer, and a hashed visitor fingerprint for unique counts. Owners see account-wide totals plus a per-link dashboard with a 24h / 7d / 30d chart, top referrers, device split, and recent clicks.
+**// dlinkit** turns long URLs into short links and records every redirect: time, device, browser, referrer, and a hashed visitor fingerprint for unique counts. Owners see account-wide totals plus a per-link dashboard with a 24h / 7d / 30d chart, top referrers, device split, and recent clicks.
 
 - **Stack:** Next.js 16 (App Router, TypeScript), Neon PostgreSQL (`pg`), Google OAuth 2.0, HS256 session JWT (`jose`)
 - **UI:** editorial Swiss-grid system, pure CSS in `public/css/`, Space Grotesk + Space Mono, CSS-only parallax
-- **Live URL:** add your Vercel URL here before submitting
+- **Live URL:** https://dlinkit.vercel.app
 - **Health check:** `GET /health` → `{ "status": "ok", "database": "up" }`
 
 ---
@@ -17,7 +17,8 @@ Canonical project documentation for **Team D · Hack4Haldia'26**.
 
 | Requirement | Status | Where |
 |---|---|---|
-| Create short links (auth required) | Done | `POST /api/shorten`, Google session cookie required |
+| Create short links | Done | `POST /api/shorten`; Google session required, or 5 free links/day per guest browser |
+| Guest shortening with a daily cap | Done | httpOnly `sw_guest` cookie, DB-enforced 5 per rolling 24h |
 | Fast redirect `/r/:code` | Done | `app/r/[code]/route.ts` + 60s in-process cache |
 | Track every click (time, device, referrer) | Done | `clicks` table, written on every redirect |
 | Stats endpoint + dashboard chart | Done | `GET /api/stats/:code?range=…`, flat SVG bar chart |
@@ -25,7 +26,7 @@ Canonical project documentation for **Team D · Hack4Haldia'26**.
 | Bonus: custom aliases and expiry | Done | Alias validation, `410` for expired links |
 | Bonus: unique vs total clicks | Done | HMAC(IP + user agent) visitor hash |
 | Bonus: rate limiting | Done | Per-IP/user sliding window |
-| Bonus: Redis redirect cache | Not used | No Redis instance provisioned; in-process TTL cache instead (see limits) |
+| Caching strategy | Local | Process-local TTL caches: 60s redirect cache, 5s dashboard cache; no external service |
 
 ---
 
@@ -136,7 +137,7 @@ Indexes: `links(user_id, created_at desc)`, `clicks(link_id, clicked_at desc)`, 
 
 ## 5. UI system
 
-The visual spec is `DESIGN.md`; the static reference is `referenceui.html`. The implementation keeps the real backend and drops all demo-data controls.
+The visual spec is `DESIGN.md`. The implementation keeps the real backend and drops all demo-data controls.
 
 ```
 public/css/
@@ -153,7 +154,7 @@ components/
   ui/               ClickChart, SegmentedControl, BarRows
 ```
 
-- Theme: `data-theme` on `<html>`, persisted in `localStorage` (`snip_theme`), set before paint by an inline script; falls back to `prefers-color-scheme`.
+- Theme: `data-theme` on `<html>`, persisted in `localStorage` (`dlinkit_theme`), set before paint by an inline script; falls back to `prefers-color-scheme`.
 - Motion: pure CSS. The hero is split into two SVG layers that drift in opposite directions with `animation-timeline: scroll(root block)`, wrapped in `@supports` and disabled by `prefers-reduced-motion`. Chart bars scale in with a short stagger. No animation library, no scroll listeners.
 - Data: no invented numbers. The stats strip reads `summary` from `/api/links`; the chart reads `/api/stats/:code?range=…`. Empty states distinguish signed-out, no-links, no-clicks, and error.
 - Auth UI: Google only. There is no email/password tab and no fake session.
@@ -204,12 +205,14 @@ Rate limits (in-process, per instance): 20 links/min per user+IP, 120 redirects/
 
 1. Push the repository to GitHub.
 2. In Vercel, **Add New → Project**, import the repo. Framework preset: **Next.js**; leave build/output defaults.
-3. Add environment variables for Production (and Preview if you want): `NEON_DATABASE_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REDIRECT_URI`, and optionally `AUTH_SECRET`.
-4. Set `GOOGLE_REDIRECT_URI` to `https://<your-vercel-domain>/api/auth/callback/google` and add that exact URI in Google Cloud Console.
+3. Add environment variables for Production (and Preview if you want): `NEON_DATABASE_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REDIRECT_URI`, and `AUTH_SECRET` (recommended: `openssl rand -base64 32`).
+4. Set `GOOGLE_REDIRECT_URI` to `https://dlinkit.vercel.app/api/auth/callback/google` and add that exact URI in Google Cloud Console. A leftover `http://localhost:3000/...` value is detected and ignored in production (the request origin is used instead), but the production URI must still be registered with Google.
 5. Deploy. Changing env vars requires a redeploy.
-6. Verify:
-   - `https://<domain>/health` → `database: "up"`
-   - `https://<domain>/r/warmup` → styled 404 page (creates schema on a fresh database)
+6. The first request after deploy creates any missing schema (`ensureSchema()`), so `db/setup.sql` is not mandatory on an existing database.
+7. Verify:
+   - `https://dlinkit.vercel.app/health` → `database: "up"`
+   - `https://dlinkit.vercel.app/api/auth/diagnose` → `effectiveRedirectUri` is the deployed callback, `clientIdSet: true`
+   - `https://dlinkit.vercel.app/r/warmup` → styled 404 page
    - Sign in, create a link, open it, check the dashboard.
 
 Do not set `APP_URL` unless you use a custom domain; the app derives the origin from forwarded headers.
@@ -222,8 +225,8 @@ Run against the real `.env` and Neon database on 2026-10-29:
 
 - `npx tsc --noEmit` — passed
 - `npm run build` — passed (Next.js 16.4.3, all routes compiled)
-- API smoke test, **23/23 checks**: auth required, create, duplicate alias 409, non-HTTP URL 400, past expiry 400, two redirects 302 with correct `Location`, click totals 2, unique 2, last-24h 2, referrer/device capture, recent clicks, owner-only stats (other user gets 404), list counts, expired link 410, delete, deleted link 404
-- UI/API check, **29/29 checks**: logged-out and logged-in page HTML, `// Snip` hero, form, stats strip, dashboard shell, about, theme script, CSS bundle contains tokens + parallax + breakpoints, public `/css/*.css` served, account name and logout state, real link + 2 clicks, `summary` matches, 24h/7d/30d series lengths and `rangeTotal`, unknown range falls back to `7d`, styled 404/410 pages, OAuth redirect with the correct `/api/auth/callback/google` path, delete
+- `verify.local.mjs` against the production build on 2026-10-29 — **41/41 checks**: health, guest shortening and quota headers, 5th guest link allowed, 6th `429 guest_limit`, guest cookie set, guest dashboard `401`, content-type 415, bad protocol 400, past expiry 400, create with alias, duplicate alias 409, list + cache hit, 24h/7d/30d buckets, redirect miss/hit + click tracking, expired 410, admin 403/overview/promote/demote/last-admin guard/expiry extend/delete, ownership 404, deleted 404, OAuth diagnose and redirect URI, admin console markup, non-secure state cookie over http
+- Page HTML served with `dlinkit` title and brand on every surface (nav, footer, auth modal, 404/410 pages, `// dlinkit` marks)
 - Temporary verification scripts and their test users were removed; no leftover data
 
 Not verified by the agent: a real Google account sign-in in a browser, the deployed Vercel URL, and a visual review at presentation size. The user must confirm these.
@@ -232,7 +235,7 @@ Not verified by the agent: a real Google account sign-in in a browser, the deplo
 
 ## 9. Known limits (honest)
 
-- **No Redis.** The redirect cache and rate limits are in-process and reset on deploy/cold start. On Vercel they are per-instance, so they are best-effort rather than globally consistent. Drop-in next step: Upstash Redis for `GET/SETEX` redirect cache and sliding-window limits.
+- **Local caching by design.** The redirect cache (60s) and dashboard cache (5s) live in process memory, so there is no Redis dependency or extra env var. They work perfectly on one warm instance; on Vercel each instance keeps its own copy, so another warm instance can serve a deleted link for up to 60s. The guest daily cap is not cached — it is counted and enforced in Postgres, so it stays correct across instances.
 - **Unique visitors are approximate.** `HMAC-SHA256(IP + user-agent)` with the server secret, so the same person on two devices/browsers counts twice. Raw IPs are never stored.
 - **No bot filtering.** Every redirect is recorded as a click.
 - **Expiry** is enforced at redirect time (`410`); expired links remain visible in the dashboard with an “Expired” badge until deleted.

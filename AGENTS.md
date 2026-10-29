@@ -1,5 +1,21 @@
 # Shared Agent Rules
 
+## Documentation map
+
+Root is intentionally small. Read the file for the area you are touching before editing.
+
+| Path | What it is |
+|---|---|
+| `README.md` | Organizers' original challenge brief. Do not edit. |
+| `AGENTS.md` | These rules. Read first. |
+| `DESIGN.md` | Visual and interaction system, tokens, layout, motion. |
+| `COMMIT.md` | Human-controlled commit workflow. |
+| `docs/brain/` | Project working memory: `AGENT_START_HERE.md` (onboarding), `PROJECT_BRIEF.md`, `DECISIONS.md`, `TASK_STATE.md` (current state), `PROJECT_BRIEF.template.md`. |
+| `docs/general/SETUP.md` | Environment, database, Google OAuth, deployment, verification and known limits. |
+| `db/db.md` | Database reference and troubleshooting. |
+
+Any new working memory (plans, state, decisions) goes in `docs/brain/`. Any general how-to or reference doc goes in `docs/general/`. Do not add new markdown files to the repository root beyond `README.md`, `AGENTS.md`, `DESIGN.md` and `COMMIT.md`; reference the right folder instead.
+
 ## Mission and priorities
 Deliver the strongest feasible hackathon prototype within the time limit. Optimize for judging fit, a working demo, reliability, clarity, and deployment—not code volume.
 
@@ -13,7 +29,7 @@ Deliver the strongest feasible hackathon prototype within the time limit. Optimi
 Do not build a platform when a small app solves the problem. Avoid microservices, complex state management, speculative abstractions, extra dependencies, broad refactors, and features not required by the brief. Prefer the smallest complete vertical slice. Cut optional features rather than compromise the core flow or deployment.
 
 ## Before implementation
-Read the official brief, rubric, repository README, and existing instructions. Identify user, problem, value, and demo-critical flow. Ask about consequential unknowns before coding. Do not invent requirements or imply fake integrations are real. If the brief is absent, ask for it.
+Read `docs/brain/AGENT_START_HERE.md`, the official brief, rubric, `README.md`, and existing instructions. Identify user, problem, value, and demo-critical flow. Ask about consequential unknowns before coding. Do not invent requirements or imply fake integrations are real. If the brief is absent, ask for it.
 
 ## Execution and agents
 Plan briefly, then build. Main agent owns implementation. Use subagents only when useful and independent; reviewers default to read-only. One owner per file. Do not concurrently mutate shared components, package manifests/lockfiles, routing, env/deployment files, or migrations.

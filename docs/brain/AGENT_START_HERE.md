@@ -4,7 +4,7 @@ Applies regardless of model, coding agent, CLI, or IDE.
 
 ## Before coding
 1. Inspect repository root, Git status, project scripts, framework, README, and organizer instructions.
-2. Read `AGENTS.md`, `PROJECT_BRIEF.md`, `TASK_STATE.md`, and `DECISIONS.md`.
+2. Read `AGENTS.md`, `docs/brain/PROJECT_BRIEF.md`, `docs/brain/TASK_STATE.md`, and `docs/brain/DECISIONS.md`.
 3. If the official challenge brief is missing, ask the user for it. Never invent a solution.
 4. Ask the user **before implementation** about consequential unknowns that could change product direction, architecture, data, integrations, credentials, cost, privacy, deployment, or acceptance criteria. Ask one concise, consolidated set of questions. Do not ask about harmless reversible choices; choose a sensible default and proceed.
 
@@ -43,4 +43,4 @@ Readable, idiomatic, small changes. Validate untrusted input. Handle likely fail
 Never commit, push, create branches, open PRs, or submit to OrganizerHQ for the user. Never run `commit.js`. Do not add AI watermarks, bot signatures, generated-by attribution, or unnecessary AI references. Ask the user to inspect `git status` and the diff before committing.
 
 ## Handoff
-Keep `TASK_STATE.md` factual: working, missing, known issues, actual command results, manual checks, next action. Put durable decisions in `DECISIONS.md`; avoid repetitive notes.
+Keep `docs/brain/TASK_STATE.md` factual: working, missing, known issues, actual command results, manual checks, next action. Put durable decisions in `docs/brain/DECISIONS.md`; avoid repetitive notes.

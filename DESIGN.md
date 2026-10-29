@@ -1,4 +1,4 @@
-# DESIGN.md — //Snip (Link Shortener + Analytics)
+# DESIGN.md — //dlinkit (Link Shortener + Analytics)
 
 A single-file, front-end-only link shortener with click analytics. Visual language: **editorial / Swiss-grid, monochrome with bold geometric accents** — inspired by the Devlab reference (thin ruled grid, mono micro-labels, pill buttons, flat shapes).
 
@@ -16,7 +16,7 @@ A single-file, front-end-only link shortener with click analytics. Visual langua
 
 ## 2. Theme tokens (light / dark)
 
-Theme is set via `data-theme="light|dark"` on `<html>`; default follows `prefers-color-scheme`, choice persisted in `localStorage` (`snip_theme`).
+Theme is set via `data-theme="light|dark"` on `<html>`; default follows `prefers-color-scheme`, choice persisted in `localStorage` (`dlinkit_theme`).
 
 | Token | Light | Dark | Use |
 |---|---|---|---|
@@ -52,7 +52,7 @@ Rule: **never hard-code colours in components** — SVG artwork and charts read 
 ## 4. Layout
 
 - **Shell:** max-width 1280px, 1px outer border, inside a 14px tinted frame.
-- **Nav:** logo `// Snip` (mono) left; nav links, theme toggle, auth pill right.
+- **Nav:** logo `// dlinkit` (mono) left; nav links, theme toggle, auth pill right.
 - **Hero:** 2 columns (1.35fr / 1fr) split by a vertical rule. Left = sparkle + H1, lead, shorten form, result card. Right = geometric SVG artwork.
 - **Stats strip:** 5 cells separated by vertical rules — account, links, total clicks, unique visitors, feature tags.
 - **Dashboard:** bordered 2-column grid (links table | selected-link analytics).

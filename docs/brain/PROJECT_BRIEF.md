@@ -1,8 +1,8 @@
-# Project Brief — // Snip (Team D)
+# Project Brief — // dlinkit (Team D)
 
 ## Challenge
 
-Hack4Haldia'26 starter: build a link shortener with a **real analytics backend**, not just redirects. Organizer brief: `README.md` (unchanged). Setup/deploy reference: `README-V2.md`.
+Hack4Haldia'26 starter: build a link shortener with a **real analytics backend**, not just redirects. Organizer brief: `README.md` (unchanged). Setup/deploy reference: `docs/general/SETUP.md`.
 
 **Target user:** a marketing or community lead who shares campaign links and needs to know how many people clicked, from where, and on what device.
 
@@ -57,14 +57,14 @@ Data: `users(1) → links(N) → clicks(N)`. Unique clicks = `count(distinct vis
 | Data/auth core | `lib/db.ts`, `lib/auth.ts`, `lib/links.ts`, `lib/analytics.ts`, `lib/rate-limit.ts` | backend |
 | API routes | `app/api/**`, `app/r/[code]/route.ts`, `app/health/route.ts` | backend |
 | UI | `app/page.tsx`, `app/layout.tsx`, `app/globals.css`, `components/**` | frontend |
-| Docs | `README-V2.md`, `PROJECT_BRIEF.md`, `DECISIONS.md`, `TASK_STATE.md` | main agent |
+| Docs | `docs/general/SETUP.md`, `PROJECT_BRIEF.md`, `DECISIONS.md`, `TASK_STATE.md` | main agent |
 | Shared manifests | `package.json`, `package-lock.json`, `tsconfig.json`, `next.config.ts`, `.gitignore` | main agent only |
 
 No parallel agents were used; one agent owned all files to avoid shared-file conflicts in a 3-hour build.
 
 ## Deployment
 
-- Vercel, framework preset Next.js; env vars per `README-V2.md`.
+- Vercel, framework preset Next.js; env vars per `docs/general/SETUP.md`.
 - Google Console redirect URI must match `GOOGLE_REDIRECT_URI` exactly for each environment.
 - Schema self-provisions on first DB request; `/health` reports DB state.
 - Risk: distinct preview/production origins need separate redirect URIs; in-memory cache/limits are per instance.
