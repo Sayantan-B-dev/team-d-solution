@@ -63,6 +63,7 @@ async function call(path, init = {}, cookie) {
 const code = `verify-${stamp}`;
 const adminCode = `verify-admin-${stamp}`;
 const expiredCode = `verify-exp-${stamp}`;
+const guestCodes = [];
 
 try {
   const health = await call("/health");
@@ -76,12 +77,61 @@ try {
   const noCookie = await call("/api/links");
   check("links requires login", noCookie.response.status === 401, String(noCookie.response.status));
 
+  // Guests may shorten: five links per day, tracked by an httpOnly cookie.
   const noAuthCreate = await call("/api/shorten", {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ url: "https://example.com" }),
+    body: JSON.stringify({ url: "https://example.com/guest" }),
   });
-  check("shorten requires login", noAuthCreate.response.status === 401, String(noAuthCreate.response.status));
+  const noAuthBody = await noAuthCreate.response.json().catch(() => ({}));
+  const guestCookie = (noAuthCreate.response.headers.get("set-cookie") ?? "").split(";")[0];
+  if (noAuthBody.code) guestCodes.push(noAuthBody.code);
+  check(
+    "guest can shorten",
+    noAuthCreate.response.status === 201 && Boolean(noAuthBody.code),
+    `${noAuthCreate.response.status} ${noAuthBody.code ?? noAuthBody.message ?? ""}`
+  );
+  check(
+    "guest quota headers",
+    noAuthCreate.response.headers.get("x-guest-limit") === "5" &&
+      noAuthCreate.response.headers.get("x-guest-remaining") === "4",
+    `${noAuthCreate.response.headers.get("x-guest-limit")}/${noAuthCreate.response.headers.get("x-guest-remaining")}`
+  );
+  check("guest cookie set", guestCookie.startsWith("sw_guest="), guestCookie ? "present" : "missing");
+
+  for (let index = 2; index <= 5; index += 1) {
+    const more = await call(
+      "/api/shorten",
+      {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ url: `https://example.com/guest-${index}` }),
+      },
+      guestCookie
+    );
+    const moreBody = await more.response.json().catch(() => ({}));
+    if (moreBody.code) guestCodes.push(moreBody.code);
+    check(`guest link ${index}/5`, more.response.status === 201, String(more.response.status));
+  }
+
+  const guestBlocked = await call(
+    "/api/shorten",
+    {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ url: "https://example.com/guest-6" }),
+    },
+    guestCookie
+  );
+  const guestBlockedBody = await guestBlocked.response.json().catch(() => ({}));
+  check(
+    "guest daily limit 429",
+    guestBlocked.response.status === 429 && guestBlockedBody.error === "guest_limit",
+    `${guestBlocked.response.status} ${guestBlockedBody.error ?? ""}`
+  );
+
+  const guestList = await call("/api/links", {}, guestCookie);
+  check("guest cannot open dashboard", guestList.response.status === 401, String(guestList.response.status));
 
   const wrongType = await call(
     "/api/shorten",
@@ -313,7 +363,7 @@ try {
   const html = await home.response.text();
   check(
     "admin console rendered",
-    home.response.status === 200 && html.includes("Admin console") && html.includes("// Snip")
+    home.response.status === 200 && html.includes("Admin console") && html.includes("// dlinkit")
   );
 
   const setCookie = oauth.response.headers.get("set-cookie") ?? "";
@@ -332,6 +382,9 @@ try {
   console.error("TEST ERROR:", error instanceof Error ? error.message : error);
 } finally {
   await pool.query("delete from users where id = any($1::uuid[])", [[user.id, admin.id]]);
+  if (guestCodes.length > 0) {
+    await pool.query("delete from links where code = any($1::text[])", [guestCodes]);
+  }
   await pool.end();
 }
 

@@ -1,32 +1,47 @@
 #!/usr/bin/env bash
-# Human-controlled, grouped commit helper.
+# Human-controlled commit helper for dlinkit.
 #
-# Stages and commits the working tree in small logical parts, one commit per
-# area, so history reads clearly instead of one giant "checkpoint" blob.
+# Three modes, all local only. It never pushes, branches, amends, rebases or
+# resets, and it always asks before the first commit.
 #
-# Usage (from the repository root):
-#   bash commit.js --check          print the plan, stage and commit nothing
-#   bash commit.js                  show the plan, ask once, then commit
+#   bash commit.js --check                 print the plan, change nothing
+#   bash commit.js "feat: message"         one commit with every change
+#   bash commit.js                         grouped commits, one per area
 #
-# The script never pushes, branches, amends, rebases or resets. It refuses to
-# commit if a .env file or anything that looks like a secret is in the group.
+# The repository workflow is human-owned: review the printed status/diff and
+# confirm with `yes`. Refuses to run if an .env or key file is in the tree.
 set -euo pipefail
-
-MODE="${1:-run}"
-if [[ "$MODE" != "--check" && "$MODE" != "run" ]]; then
-  echo "Usage: bash commit.js [--check]"
-  exit 1
-fi
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPT_DIR"
 
-# One message and one path list per commit. Order matters: remove the old app,
-# add the new one, then docs and tooling.
+MODE="grouped"
+MESSAGE=""
+case "${1:-}" in
+  --check) MODE="check" ;;
+  "") ;;
+  --*) echo "Usage: bash commit.js [--check | \"commit message\"]"; exit 1 ;;
+  *) MODE="single"; MESSAGE="$1" ;;
+esac
+
+CURRENT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+echo "Repository: $(pwd)"
+echo "Branch: $CURRENT_BRANCH"
+if [[ "$CURRENT_BRANCH" != "main" ]]; then
+  echo "Note: this project is committed on main. You are on $CURRENT_BRANCH."
+fi
+
+secret_paths=$(git status --porcelain | grep -E '(^|/)(\.env(\..*)?|.*\.pem|.*\.key)$' || true)
+if [[ -n "$secret_paths" ]]; then
+  echo "Refusing to commit: an .env or key file is in the working tree."
+  echo "$secret_paths"
+  exit 1
+fi
+
 GROUP_MESSAGES=(
   "chore: remove the Python starter and its browser assets"
   "chore: stand up the Next.js app with env and build configuration"
-  "feat(ui): build the // Snip single-page interface and styles"
+  "feat(ui): build the dlinkit single-page interface and styles"
   "feat(api): shorten links, redirect, and track click analytics"
   "feat(db): add the guest-ready PostgreSQL schema and setup scripts"
   "docs: record the brief, design decisions and project state"
@@ -39,22 +54,52 @@ GROUP_PATHS=(
   "app components public"
   "lib"
   "db"
-  "AGENTS.md AGENT_START_HERE.md DECISIONS.md DESIGN.md PROJECT_BRIEF.md PROJECT_BRIEF.template.md README-V2.md TASK_STATE.md"
-  "commit.js commit.md verify.local.mjs referenceui.html .opencode"
+  "AGENTS.md DESIGN.md COMMIT.md docs"
+  "commit.js verify.local.mjs .opencode"
 )
 
-echo "Repository: $(pwd)"
-echo "Branch: $(git rev-parse --abbrev-ref HEAD)"
+# ---------------------------------------------------------------------------
+# Single commit: every change under one message (use for one coherent change
+# such as a rebrand that touches app, docs and database comments together).
+# ---------------------------------------------------------------------------
+if [[ "$MODE" == "single" ]]; then
+  if [[ -z "$(git status --porcelain)" ]]; then
+    echo "Nothing to commit. Working tree is clean."
+    exit 0
+  fi
 
-# Hard stop on anything secret-like in the working tree. .env is also
-# gitignored; this is a second line of defence.
-secret_paths=$(git status --porcelain | grep -E '(^|/)(\.env(\..*)?|.*\.pem|.*\.key)$' || true)
-if [[ -n "$secret_paths" ]]; then
-  echo "Refusing to commit: an .env or key file is in the working tree."
-  echo "$secret_paths"
-  exit 1
+  echo
+  echo "Single commit with every change:"
+  echo "  $MESSAGE"
+  echo
+  git status --short | sed 's/^/  /'
+  echo
+  git diff --stat | sed 's/^/  /'
+
+  if [[ "$MODE" == "check" ]]; then :; fi
+  if [[ "${2:-}" == "--check" ]]; then
+    echo
+    echo "Dry run only. Nothing staged or committed."
+    exit 0
+  fi
+
+  echo
+  read -r -p "Stage ALL changes and commit as \"$MESSAGE\"? (type yes): " ok
+  if [[ "$ok" != "yes" ]]; then
+    echo "Cancelled. Nothing staged or committed."
+    exit 0
+  fi
+
+  git add -A
+  git commit -m "$MESSAGE"
+  echo
+  echo "Done. Review with:  git log --oneline -3 && git status"
+  exit 0
 fi
 
+# ---------------------------------------------------------------------------
+# Grouped mode: one commit per area, in order.
+# ---------------------------------------------------------------------------
 pending=()
 for index in "${!GROUP_MESSAGES[@]}"; do
   # shellcheck disable=SC2086
@@ -72,7 +117,6 @@ for index in "${pending[@]}"; do
   git status --short -- ${GROUP_PATHS[$index]} | sed 's/^/     /'
 done
 
-# Anything no group covers is reported, never silently committed.
 covered=""
 for paths in "${GROUP_PATHS[@]}"; do covered+=" $paths"; done
 leftovers=$(git status --porcelain | while IFS= read -r line; do
@@ -91,14 +135,14 @@ if [[ -n "$leftovers" ]]; then
   echo "$leftovers"
 fi
 
-if [[ "$MODE" == "--check" ]]; then
+if [[ "$MODE" == "check" ]]; then
   echo
   echo "Dry run only. Nothing staged or committed."
   exit 0
 fi
 
 echo
-read -r -p "Commit these ${#pending[@]} groups to $(git rev-parse --abbrev-ref HEAD)? (type yes): " commit_ok
+read -r -p "Commit these ${#pending[@]} groups to $CURRENT_BRANCH? (type yes): " commit_ok
 if [[ "$commit_ok" != "yes" ]]; then
   echo "Cancelled. Nothing staged or committed."
   exit 0
