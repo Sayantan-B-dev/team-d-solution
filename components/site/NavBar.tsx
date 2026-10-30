@@ -14,7 +14,7 @@ export default function NavBar({ user, onAuth }: Props) {
   return (
     <nav aria-label="Primary">
       <a className="logo" href="#top">
-        // dlinkit
+        <img className="logo-img" src="/logo.png" alt="dlinkit" width={32} height={32} />
       </a>
 
       <div className="nav-r">

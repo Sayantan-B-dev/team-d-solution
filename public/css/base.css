@@ -121,11 +121,19 @@ nav {
 }
 
 .logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-family: var(--mono);
   font-size: 15px;
   font-weight: 700;
   text-decoration: none;
   letter-spacing: -0.01em;
+}
+
+.logo-img {
+  display: block;
+  border-radius: 6px;
 }
 
 .logo:hover {
